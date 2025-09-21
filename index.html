@@ -3,360 +3,167 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Collecte de données — Interface simple</title>
+  <title>Collecte de données — Simulation (Exercice)</title>
   <style>
     :root{
-      /* Thème vert & blanc */
       --bg:#ffffff; --panel:#f4fdf4; --accent:#2e7d32; --text:#1b1b1b; --muted:#4d6651; --danger:#d32f2f; --ok:#388e3c;
-      --radius:16px;
+      --radius:12px;
     }
     *{box-sizing:border-box}
-    html,body{margin:0;height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--text)}
-    .wrap{max-width:1100px;margin:24px auto;padding:24px}
-    .card{background:var(--panel);border:1px solid rgba(0,0,0,.08);border-radius:var(--radius);box-shadow:0 10px 30px rgba(0,0,0,.12)}
-    header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 24px;border-bottom:1px solid rgba(0,0,0,.08)}
-    .brand{display:flex;align-items:center;gap:16px}
-    .brand img{max-height:72px;border-radius:12px}
-    header h1{margin:0;font-size:1.35rem;letter-spacing:.3px;color:var(--accent)}
-    header .actions{display:flex;gap:8px;flex-wrap:wrap}
-    button, .btn{border:0;border-radius:12px;padding:10px 14px;cursor:pointer;background:var(--accent);color:#fff;font-weight:600}
-    button.secondary{background:#81c784;color:#08340c}
-    button.ghost{background:transparent;border:1px solid var(--accent);color:var(--accent)}
-    button.danger{background:var(--danger);color:#fff}
-    button:disabled{opacity:.6;cursor:not-allowed}
-    main{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:18px}
-    @media (max-width:900px){main{grid-template-columns:1fr}}
-    form{display:grid;gap:12px;padding:18px}
-    label{font-size:.9rem;color:var(--muted)}
-    input,select,textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(0,0,0,.12);background:#fff;color:var(--text);outline:none}
-    input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(46,125,50,.2)}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .help{font-size:.8rem;color:var(--muted)}
-    .error{color:var(--danger);font-size:.85rem}
-    .success{color:var(--ok);font-size:.9rem}
-    .table{padding:18px}
-    table{width:100%;border-collapse:separate;border-spacing:0 8px}
-    th,td{text-align:left;padding:12px 14px}
-    thead th{color:var(--muted);font-weight:700}
-    tbody tr{background:#fff;border:1px solid rgba(0,0,0,.08)}
-    tbody tr td:first-child{border-top-left-radius:10px;border-bottom-left-radius:10px}
-    tbody tr td:last-child{border-top-right-radius:10px;border-bottom-right-radius:10px}
-    .toast{position:fixed;right:20px;bottom:20px;background:var(--accent);color:#fff;padding:12px 16px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;transform:translateY(10px);transition:all .25s}
-    .toast.show{opacity:1;transform:translateY(0)}
-    .badge{display:inline-block;padding:2px 8px;border-radius:999px;background:rgba(46,125,50,.18);color:var(--accent);font-size:.75rem}
-    .muted{color:var(--muted)}
-    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text)}
+    .wrap{max-width:980px;margin:20px auto;padding:18px}
+    .card{background:var(--panel);border-radius:var(--radius);padding:12px;box-shadow:0 6px 18px rgba(0,0,0,.08)}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand img{height:64px;border-radius:8px}
+    h1{margin:0;color:var(--accent);font-size:1.1rem}
+    form{margin-top:12px;display:grid;gap:10px}
+    label{font-size:.9rem;color:var(--muted);display:block;margin-bottom:6px}
+    input,textarea,select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,.08)}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .muted{color:var(--muted);font-size:.88rem}
+    .buttons{display:flex;gap:8px;align-items:center}
+    /* MASQUER les contrôles publics (export/changer logo/copier) */
+    #exportCsvBtn, #exportXlsxBtn, #changeLogoBtn, #copyLinkBtn { display: none !important; }
+    .notice {border-left:4px solid var(--accent);padding:10px;background:#f6fff6;border-radius:8px;color:var(--muted)}
+    .danger-note {border-left:4px solid var(--danger);background:#fff6f6}
+    .success{color:var(--ok)}
   </style>
-  <!-- Bibliothèque pour export Excel -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
   <div class="wrap card" role="region" aria-labelledby="title">
     <header>
       <div class="brand">
-        <!-- Logo en haut -->
-        <img id="logo" src="https://via.placeholder.com/300x90.png?text=Votre+Logo" alt="Logo" />
-        <h1 id="title">Collecte de données — Formulaire</h1>
+        <!-- LOGO depuis GitHub raw (remplace TON_USER/TON_REPO/path) -->
+        <img id="logo" src="https://raw.githubusercontent.com/TON_USER/TON_REPO/main/assets/logo.png" alt="Logo" onerror="this.style.display='none'" />
+        <div>
+          <h1 id="title">Collecte de données — Simulation (Exercice)</h1>
+          <div class="muted">Page de démonstration — <strong>consentement requis</strong></div>
+        </div>
       </div>
-      <div class="actions">
-        <button id="exportCsvBtn" class="ghost" type="button" title="Exporter les réponses en CSV">Exporter CSV</button>
-        <button id="exportXlsxBtn" class="secondary" type="button" title="Exporter au format Excel (.xlsx)">Exporter Excel</button>
-        <button id="changeLogoBtn" class="ghost" type="button" title="Changer le logo">Changer le logo</button>
-        <input id="logoInput" type="file" accept="image/*" style="display:none" />
-        <button id="copyLinkBtn" class="ghost" type="button" title="Copier le lien partageable">Copier le lien</button>
-        <button id="clearBtn" class="danger" type="button" title="Supprimer toutes les réponses">Réinitialiser</button>
+
+      <div class="buttons">
+        <!-- Ces boutons sont masqués via CSS pour les participants -->
+        <button id="exportCsvBtn">Exporter CSV</button>
+        <button id="exportXlsxBtn">Exporter Excel</button>
+        <button id="changeLogoBtn">Changer le logo</button>
+        <button id="copyLinkBtn">Copier le lien</button>
+        <button id="clearBtn" onclick="if(confirm('Réinitialiser le stockage local ?')){localStorage.removeItem('dcf_submissions_v1');alert('Réinitialisé');}">Réinitialiser</button>
       </div>
     </header>
 
-    <main>
-      <section aria-labelledby="formTitle">
-        <h2 id="formTitle" class="sr-only">Formulaire</h2>
-        <form id="dataForm" novalidate>
-          <div>
-            <label for="fullName">Nom complet *</label>
-            <input id="fullName" name="fullName" type="text" required minlength="2" autocomplete="name" placeholder="Ex. Fofa El Amrani" />
-            <div class="help">Au moins 2 caractères.</div>
-          </div>
-          <div class="row">
-            <div>
-              <label for="email">Email *</label>
-              <input id="email" name="email" type="email" required autocomplete="email" placeholder="exemple@domaine.com" />
-            </div>
-            <div>
-              <label for="phone">Téléphone</label>
-              <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+1 514 555 1234" />
-            </div>
-          </div>
-          <div class="row">
-            <div>
-              <label for="role">Rôle / Fonction *</label>
-              <input id="role" name="role" type="text" required placeholder="Étudiante, Analyste SOC, etc." />
-            </div>
-            <div>
-              <label for="category">Catégorie</label>
-              <select id="category" name="category">
-                <option value="">— Sélectionner —</option>
-                <option>Inscription</option>
-                <option>Questionnaire</option>
-                <option>Incident</option>
-                <option>Recherche</option>
-              </select>
-            </div>
-          </div>
+    <div style="margin-top:12px" class="notice">
+      <strong>INFO — Simulation pédagogique :</strong>
+      Cet exercice est une simulation. <strong>Toute donnée sensible ne doit pas être fournie</strong> — n’entrez pas de mots de passe réels ou d’informations bancaires. Les réponses sont envoyées au serveur pour l’exercice et enregistrées pour correction.
+    </div>
 
-          <div>
-            <label for="message">Message / Détails *</label>
-            <textarea id="message" name="message" rows="5" required placeholder="Décris l'objectif, le contexte, l'incident, etc."></textarea>
-          </div>
+    <form id="dataForm" novalidate style="margin-top:14px">
+      <label for="fullName">Nom complet *</label>
+      <input id="fullName" name="fullName" type="text" required minlength="2" placeholder="Ex. Fofa El Amrani" />
 
-          <div>
-            <label for="file">Pièce jointe (optionnel)</label>
-            <input id="file" name="file" type="file" />
-            <div class="help">La pièce jointe n'est pas envoyée : elle est encodée en base64 et stockée localement, exportable en CSV/Excel.</div>
-          </div>
+      <div class="row">
+        <div>
+          <label for="email">Email *</label>
+          <input id="email" name="email" type="email" required placeholder="exemple@domaine.com" />
+        </div>
+        <div>
+          <label for="phone">Téléphone (optionnel)</label>
+          <input id="phone" name="phone" type="tel" placeholder="+1 514 555 1234" />
+        </div>
+      </div>
 
-          <!-- Champ anti‑bot (honeypot) -->
-          <div aria-hidden="true" class="sr-only">
-            <label for="website">Site web</label>
-            <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
-          </div>
+      <label for="role">Rôle / Fonction</label>
+      <input id="role" name="role" type="text" placeholder="Étudiante, Analyste SOC..." />
 
-          <div>
-            <label class="muted">
-              <input id="consent" type="checkbox" required />
-              J'autorise l'utilisation de ces données pour l'objectif indiqué. <span class="badge">Obligatoire</span>
-            </label>
-          </div>
+      <label for="operator">Opérateur mobile (optionnel)</label>
+      <input id="operator" name="operator" type="text" placeholder="Ex. Bell, Rogers..." />
 
-          <div>
-            <button type="submit">Soumettre</button>
-            <span id="status" class="help" aria-live="polite"></span>
-          </div>
-        </form>
-      </section>
+      <label for="category">Catégorie</label>
+      <select id="category" name="category">
+        <option value="">— Sélectionner —</option>
+        <option>Inscription</option>
+        <option>Questionnaire</option>
+        <option>Incident</option>
+        <option>Recherche</option>
+      </select>
 
-      <section class="table" aria-labelledby="tableTitle">
-        <h2 id="tableTitle" class="sr-only">Réponses</h2>
-        <div class="help" style="margin-bottom:8px">Les réponses sont stockées en <strong>local</strong> dans votre navigateur (LocalStorage). Exportez en CSV ou Excel pour les partager.</div>
-        <table aria-describedby="tableTitle">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Nom</th>
-              <th>Email</th>
-              <th>Rôle</th>
-              <th>Catégorie</th>
-              <th>Message</th>
-              <th>Pièce jointe</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody id="responsesBody"></tbody>
-        </table>
-      </section>
-    </main>
+      <label for="message">Message / Détails *</label>
+      <textarea id="message" name="message" rows="4" required placeholder="Décris l'objectif, le contexte..."></textarea>
+
+      <label for="file">Pièce jointe (optionnel)</label>
+      <input id="file" name="file" type="file" accept=".png,.jpg,.pdf,.txt" />
+
+      <!-- Champ honeypot -->
+      <div style="position:absolute;left:-9999px;top:auto;">
+        <label for="website">Site</label>
+        <input id="website" name="website" type="text" autocomplete="off" tabindex="-1" />
+      </div>
+
+      <label>
+        <input id="consent" name="consent" type="checkbox" required />
+        J'accepte que mes réponses soient utilisées uniquement dans le cadre de cet exercice pédagogique.
+      </label>
+
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button id="submitBtn" type="submit">Soumettre (simulation)</button>
+        <button type="button" onclick="form.reset()">Réinitialiser le formulaire</button>
+      </div>
+      <div id="status" class="muted" aria-live="polite" style="margin-top:8px"></div>
+    </form>
   </div>
 
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-
   <script>
+    // Envoi vers le backend (ex: https://ton-domaine/api/submit)
+    const API_ENDPOINT = '/api/submit'; // en local, ou remplace par ton URL complète
+
     const form = document.getElementById('dataForm');
-    const body = document.getElementById('responsesBody');
     const statusEl = document.getElementById('status');
-    const toast = document.getElementById('toast');
 
-    const exportBtn = document.getElementById('exportCsvBtn');
-    const exportXlsxBtn = document.getElementById('exportXlsxBtn');
-    const clearBtn = document.getElementById('clearBtn');
-    const copyLinkBtn = document.getElementById('copyLinkBtn');
+    function fileToBase64(file){ return new Promise((resolve,reject)=>{ if(!file) return resolve(null); const r=new FileReader(); r.onload=()=>resolve(r.result); r.onerror=reject; r.readAsDataURL(file); }); }
 
-    const logoEl = document.getElementById('logo');
-    const changeLogoBtn = document.getElementById('changeLogoBtn');
-    const logoInput = document.getElementById('logoInput');
-
-    const STORAGE_KEY = 'dcf_submissions_v1';
-    const LOGO_KEY = 'dcf_logo_datauri_v1';
-
-    function toastMsg(msg){
-      toast.textContent = msg;
-      toast.classList.add('show');
-      setTimeout(()=>toast.classList.remove('show'), 2200);
-    }
-
-    function load(){
-      try{ return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
-      catch{ return []; }
-    }
-    function save(arr){ localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
-
-    function fileToBase64(file){
-      return new Promise((resolve,reject)=>{
-        if(!file) return resolve(null);
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
-    function render(){
-      const data = load();
-      body.innerHTML = '';
-      data.forEach((row, i)=>{
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${i+1}</td>
-          <td>${escapeHtml(row.fullName)}</td>
-          <td>${escapeHtml(row.email)}</td>
-          <td>${escapeHtml(row.role||'')}</td>
-          <td>${escapeHtml(row.category||'')}</td>
-          <td title="${escapeHtml(row.message)}">${truncate(escapeHtml(row.message), 60)}</td>
-          <td>${row.fileName?`<span class="badge" title="${row.fileName}">fichier</span>`:''}</td>
-          <td>${new Date(row.createdAt).toLocaleString()}</td>
-        `;
-        body.appendChild(tr);
-      });
-    }
-
-    function truncate(s, n){ return s && s.length>n? s.slice(0,n-1)+'…' : (s||''); }
-    function escapeHtml(str){ return (str||'').replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m])); }
-
-    async function onSubmit(e){
+    form.addEventListener('submit', async (e)=>{
       e.preventDefault();
-      statusEl.textContent = '';
+      statusEl.textContent = 'Envoi en cours...';
 
-      const hp = form.website?.value?.trim();
-      if(hp){ toastMsg('Bot détecté. Soumission annulée.'); return; }
+      // honeypot
+      if(document.getElementById('website').value.trim()){ statusEl.textContent='Bot détecté'; return; }
 
-      const fullName = form.fullName.value.trim();
-      const email = form.email.value.trim();
-      const role = form.role.value.trim();
-      const category = form.category.value.trim();
-      const message = form.message.value.trim();
-      const consent = form.consent.checked;
+      const consent = document.getElementById('consent').checked;
+      if(!consent){ statusEl.textContent = 'Consentement requis.'; return; }
 
-      const errors = [];
-      if(fullName.length < 2) errors.push('Nom trop court');
-      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push('Email invalide');
-      if(!role) errors.push('Rôle requis');
-      if(!message) errors.push('Message requis');
-      if(!consent) errors.push('Consentement requis');
+      // collect
+      const fileInput = document.getElementById('file').files[0];
+      const fileData = await fileToBase64(fileInput).catch(()=>null);
+      // build payload
+      const payload = {
+        fullName: document.getElementById('fullName').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        role: document.getElementById('role').value.trim(),
+        operator: document.getElementById('operator').value.trim(),
+        category: document.getElementById('category').value,
+        message: document.getElementById('message').value.trim(),
+        fileName: fileInput ? fileInput.name : null,
+        fileData, // base64
+        consentGiven: true,
+        simulated: true // marqueur pédagogique
+      };
 
-      if(errors.length){
-        statusEl.innerHTML = `<span class="error">${errors.join(' · ')}</span>`;
-        return;
-      }
-
-      let fileName = null; let fileData = null; let fileType = null;
-      const file = form.file.files?.[0];
-      if(file){
-        fileName = file.name; fileType = file.type;
-        try{ fileData = await fileToBase64(file); }
-        catch{ fileData = null; }
-      }
-
-      const entry = { fullName, email, phone: form.phone.value.trim(), role, category, message, fileName, fileType, fileData, createdAt: Date.now() };
-      const arr = load(); arr.push(entry); save(arr);
-
-      form.reset();
-      statusEl.innerHTML = '<span class="success">Soumis localement ✔︎ — Pense à exporter</span>';
-      toastMsg('Réponse enregistrée localement');
-      render();
-    }
-
-    function toCsv(arr){
-      const headers = ['fullName','email','phone','role','category','message','fileName','fileType','fileData','createdAt'];
-      const lines = [headers.join(',')];
-      arr.forEach(o=>{
-        const vals = headers.map(h=>{
-          let v = o[h] ?? '';
-          if(typeof v === 'string'){
-            v = '"' + v.replace(/"/g,'""') + '"';
-          }else if(typeof v === 'number'){
-            v = '"' + new Date(v).toISOString() + '"';
-          }else{
-            v = '"' + String(v) + '"';
-          }
-          return v;
-        });
-        lines.push(vals.join(','));
-      });
-      return lines.join('\n');
-    }
-
-    function download(filename, content, mime='text/plain'){
-      const blob = new Blob([content], {type:mime});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = filename; a.click();
-      setTimeout(()=>URL.revokeObjectURL(url), 1000);
-    }
-
-    // Export CSV
-    exportBtn.addEventListener('click', ()=>{
-      const arr = load();
-      if(!arr.length){ toastMsg('Aucune réponse à exporter'); return; }
-      download(`responses_${new Date().toISOString().slice(0,10)}.csv`, toCsv(arr), 'text/csv');
-    });
-
-    // Export Excel (.xlsx) via SheetJS
-    exportXlsxBtn.addEventListener('click', ()=>{
-      const arr = load();
-      if(!arr.length){ toastMsg('Aucune réponse à exporter'); return; }
+      // IMPORTANT: NE PAS demander de mots de passe / données bancaires réelles
       try{
-        const wsData = [ ['fullName','email','phone','role','category','message','fileName','fileType','fileData','createdAt'] ];
-        arr.forEach(o=>{
-          wsData.push([
-            o.fullName||'', o.email||'', o.phone||'', o.role||'', o.category||'', o.message||'', o.fileName||'', o.fileType||'', o.fileData||'', new Date(o.createdAt).toISOString()
-          ]);
+        const resp = await fetch(API_ENDPOINT, {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify(payload)
         });
-        const wb = XLSX.utils.book_new();
-        const ws = XLSX.utils.aoa_to_sheet(wsData);
-        XLSX.utils.book_append_sheet(wb, ws, 'Responses');
-        const wbout = XLSX.write(wb, {bookType:'xlsx', type:'array'});
-        download(`responses_${new Date().toISOString().slice(0,10)}.xlsx`, wbout, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        if(!resp.ok) throw new Error('Erreur serveur');
+        statusEl.textContent = 'Soumission enregistrée (simulation).';
+        form.reset();
       }catch(err){
         console.error(err);
-        toastMsg('Erreur export Excel');
+        statusEl.textContent = 'Erreur lors de l’envoi. Voir la console.';
       }
     });
-
-    // Logo: changer & persister
-    changeLogoBtn.addEventListener('click', ()=> logoInput.click());
-    logoInput.addEventListener('change', async (e)=>{
-      const f = e.target.files?.[0];
-      if(!f) return;
-      const dataUrl = await fileToBase64(f);
-      if(dataUrl){
-        logoEl.src = dataUrl;
-        localStorage.setItem(LOGO_KEY, dataUrl);
-        toastMsg('Logo mis à jour');
-      }
-    });
-
-    // Copie du lien
-    copyLinkBtn.addEventListener('click', async ()=>{
-      try{ await navigator.clipboard.writeText(location.href); toastMsg('Lien copié'); }
-      catch{ toastMsg('Impossible de copier le lien'); }
-    });
-
-    // Réinitialisation
-    clearBtn.addEventListener('click', ()=>{
-      if(confirm('Supprimer toutes les réponses locales ?')){
-        localStorage.removeItem(STORAGE_KEY);
-        render();
-        toastMsg('Réinitialisé');
-      }
-    });
-
-    form.addEventListener('submit', onSubmit);
-
-    // init
-    (function init(){
-      const savedLogo = localStorage.getItem(LOGO_KEY);
-      if(savedLogo) logoEl.src = savedLogo;
-      render();
-    })();
   </script>
 </body>
 </html>
