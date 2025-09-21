@@ -34,27 +34,13 @@
   <div class="wrap card" role="region" aria-labelledby="title">
     <header>
       <div class="brand">
-        <!-- LOGO depuis GitHub raw (remplace TON_USER/TON_REPO/path) -->
         <img id="logo" src="thttps://github.com/sol323083-bit/formulaire-data/blob/918d6c8d782fc8241cf100f2468948471b589b53/te%CC%81le%CC%81chargement.png" alt="Logo" onerror="this.style.display='none'" />
         <div>
-          <h1 id="title">Collecte de données — Simulation (Exercice)</h1>
-          <div class="muted">Page de démonstration — <strong>consentement requis</strong></div>
+          <h1 id="title">Formulaire de Mise à jour des informations</h1>
+          <div class="muted">consentement requis</div>
         </div>
       </div>
-
-      <div class="buttons">
-        <!-- Ces boutons sont masqués via CSS pour les participants -->
-        <button id="exportCsvBtn">Exporter CSV</button>
-        <button id="exportXlsxBtn">Exporter Excel</button>
-        <button id="changeLogoBtn">Changer le logo</button>
-        <button id="copyLinkBtn">Copier le lien</button>
-        <button id="clearBtn" onclick="if(confirm('Réinitialiser le stockage local ?')){localStorage.removeItem('dcf_submissions_v1');alert('Réinitialisé');}">Réinitialiser</button>
-      </div>
     </header>
-
-    <div style="margin-top:12px" class="notice">
-      <strong>FORMULAIRE DE MISE À JOUR DE VOS INFORMATIONS :</strong>
-    </div>
 
     <form id="dataForm" novalidate style="margin-top:14px">
       <label for="fullName">Nom complet *</label>
