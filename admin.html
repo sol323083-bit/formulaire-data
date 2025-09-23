@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <title>Admin — Réponses (simulation)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <style>body{font-family:Inter,system-ui,Arial;padding:18px;background:#fff;color:#111} pre{white-space:pre-wrap;word-break:break-word;background:#f6f8f9;padding:12px;border-radius:8px}</style>
+</head>
+<body>
+  <h1>Admin — Réponses (simulation)</h1>
+  <p>Cette page lit les réponses stockées dans <code>localStorage</code> (client only).</p>
+
+  <label>Mot de passe d'accès (simu) : <input id="pw" type="password" placeholder="mot de passe"/></label>
+  <button id="btn">Afficher</button>
+  <button id="csv">Télécharger CSV</button>
+
+  <h2>Dernières réponses</h2>
+  <pre id="out">Aucune action</pre>
+
+  <script>
+    const SAFE_PW = 'letmein'; // change si tu veux (SIMULATION seulement)
+    const keys = ['simu_submissions_v1','dcf_submissions_v1','responses','submissions'];
+
+    function readStorage(){
+      for(const k of keys){
+        const s = localStorage.getItem(k);
+        if(s) return {key:k, arr: JSON.parse(s)};
+      }
+      return null;
+    }
+
+    document.getElementById('btn').onclick = ()=>{
+      const pw = document.getElementById('pw').value;
+      if(pw !== SAFE_PW){ alert('Mot de passe incorrect (simulation)'); return; }
+      const data = readStorage();
+      if(!data) { document.getElementById('out').textContent = 'Aucune donnée trouvée.'; return; }
+      document.getElementById('out').textContent = JSON.stringify(data, null, 2);
+    };
+
+    document.getElementById('csv').onclick = ()=>{
+      const data = readStorage();
+      if(!data || !Array.isArray(data.arr) || data.arr.length===0){ alert('Aucune entrée à exporter'); return; }
+      const headers = Array.from(data.arr.reduce((s,o)=>{ Object.keys(o).forEach(k=>s.add(k)); return s; }, new Set()));
+      const csv = [headers.join(',')].concat(data.arr.map(o=>{
+        return headers.map(h=>{
+          let v = o[h] ?? '';
+          if(typeof v === 'number') v = new Date(v).toISOString();
+          v = String(v).replace(/"/g,'""');
+          return `"${v}"`;
+        }).join(',');
+      })).join('\n');
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+      a.download = `${data.key || 'responses'}_${new Date().toISOString().slice(0,10)}.csv`; document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(a.href);
+    };
+  </script>
+</body>
+</html>
