@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Relevé de compte – Automne 2025</title>
+<style>
+  /* Styles simples et compatibles email */
+  body { margin:0; padding:0; background:#f6f7f9; font-family:Arial, Helvetica, sans-serif; color:#1a1a1a; }
+  .wrapper { width:100%; background:#f6f7f9; padding:24px 0; }
+  .container { max-width:680px; margin:0 auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:8px; overflow:hidden; }
+  .header-bar { display:flex; justify-content:space-between; align-items:center; padding:16px 20px; background:#ffffff; border-bottom:1px solid #e5e7eb; }
+  .header-bar img { display:block; height:56px; width:auto; }
+  .content { padding:24px 20px 28px; line-height:1.55; }
+  h1 { font-size:22px; margin:0 0 8px; text-transform:uppercase; letter-spacing:.3px; }
+  .subhead { font-size:15px; margin:0 0 20px; color:#374151; }
+  .notice { background:#fff8e6; border:1px solid #f59e0b; padding:12px 14px; border-radius:6px; margin:16px 0; }
+  .section-title { font-weight:bold; margin:22px 0 8px; font-size:16px; }
+  p { margin:10px 0; }
+  .footer { padding:14px 20px 20px; font-size:12px; color:#6b7280; border-top:1px solid #e5e7eb; background:#fafafa; }
+  .refs { font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:12px; color:#374151; margin-top:10px; }
+  .muted { color:#6b7280; }
+  @media (max-width:480px){
+    .header-bar { flex-direction:column; gap:12px; }
+    .header-bar img { height:48px; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="container">
+
+      <!-- En-têtes PNG : remplacez les src par vos vraies images -->
+      <div class="header-bar">
+        <img src="header-gauche.png" alt="En-tête gauche">
+        <img src="header-droit.png" alt="En-tête droit">
+      </div>
+
+      <div class="content">
+        <h1>Relevé de compte – Automne 2025</h1>
+        <p class="subhead"><strong>Date limite de réception de paiement :</strong> 15 novembre 2025*</p>
+
+        <div class="notice">
+          Veuillez favoriser le paiement via votre institution bancaire.
+        </div>
+
+        <p>Veuillez trouver ci-joint la facture.</p>
+
+        <p>Pour le trimestre <strong>AUTOMNE 2025</strong> : La date limite de réception du paiement est le <strong>15 novembre 2025</strong>, après cette date une <strong>pénalité de 2&nbsp;%</strong> du solde non payé viendra s’ajouter à votre solde, pour un maximum de <strong>154,50&nbsp;$</strong>.</p>
+
+        <div class="section-title">Paiement international</div>
+        <p>Convera est maintenant la seule façon de payer vos droits de scolarité à partir d’un compte détenu à l’étranger.</p>
+
+        <p>Consultez la page <em>Dispositions financières</em> qui présente les différents modes de paiement pour régler votre solde.</p>
+
+        <p class="muted" style="margin-top:18px;">
+          *Tous les paiements doivent être reçus au Service des finances au plus tard le 15 novembre 2025.<br>
+          Veuillez s’il vous plaît prévoir tous délais bancaires.
+        </p>
+
+        <p>Notez qu’aucun relevé de compte (facture) ne sera transmis par la poste (pièce jointe).</p>
+
+        <div class="section-title">Coordonnées</div>
+        <p>
+          Registrariat/mj<br>
+          Service des finances
+        </p>
+
+        <div class="section-title">Références</div>
+        <div class="refs">
+          2315529<br>
+          2321403<br>
+          2351362<br>
+          2092836<br>
+          2342643
+        </div>
+      </div>
+
+      <div class="footer">
+        Ce message est généré à des fins d’information. Conservez une copie pour vos dossiers.
+      </div>
+    </div>
+  </div>
+</body>
+</html>
